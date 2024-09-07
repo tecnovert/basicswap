@@ -162,7 +162,7 @@ class BaseApp:
             socket.getaddrinfo = self.default_socket_getaddrinfo
         socket.setdefaulttimeout(self.default_socket_timeout)
 
-    def readURL(self, url: str, timeout: int = 120, headers=None) -> bytes:
+    def readURL(self, url: str, timeout: int = 120, headers={}) -> bytes:
         open_handler = None
         if self.use_tor_proxy:
             open_handler = SocksiPyHandler(socks.PROXY_TYPE_SOCKS5, self.tor_proxy_host, self.tor_proxy_port)
