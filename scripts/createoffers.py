@@ -58,7 +58,7 @@ Create offers
 
 """
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 import os
 import json
@@ -66,6 +66,8 @@ import time
 import random
 import shutil
 import signal
+import socket
+import socks
 import urllib
 import logging
 import argparse
@@ -78,15 +80,40 @@ DEFAULT_CONFIG_FILE: str = "createoffers.json"
 DEFAULT_STATE_FILE: str = "createoffers_state.json"
 
 
-def post_req(url: str, json_data=None):
+def getaddrinfo_tor(*args):
+    return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (args[0], args[1]))]
+
+
+def post_req(url: str, json_data=None, proxy_str: str = None):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    if json_data:
-        req.add_header("Content-Type", "application/json; charset=utf-8")
-        post_bytes = json.dumps(json_data).encode("utf-8")
-        req.add_header("Content-Length", len(post_bytes))
-    else:
-        post_bytes = None
-    return urlopen(req, data=post_bytes, timeout=300).read()
+
+    try:
+        if proxy_str is not None:
+            old_socket = socket.socket
+            old_socket_getaddrinfo = socket.getaddrinfo
+            host, port = proxy_str.split(":")
+            socks.setdefaultproxy(
+                socks.PROXY_TYPE_SOCKS5,
+                host,
+                int(port),
+                rdns=True,
+            )
+            socket.socket = socks.socksocket
+            socket.getaddrinfo = (
+                getaddrinfo_tor  # Without this accessing .onion links would fail
+            )
+
+        if json_data:
+            req.add_header("Content-Type", "application/json; charset=utf-8")
+            post_bytes = json.dumps(json_data).encode("utf-8")
+            req.add_header("Content-Length", len(post_bytes))
+        else:
+            post_bytes = None
+        return urlopen(req, data=post_bytes, timeout=300).read()
+    finally:
+        if proxy_str is not None:
+            socket.socket = old_socket
+            socket.getaddrinfo = old_socket_getaddrinfo
 
 
 def make_json_api_func(host: str, port: int):
@@ -123,11 +150,24 @@ def findCoin(coin: str, known_coins) -> str:
     raise ValueError(f"Unknown coin {coin}")
 
 
-def readConfig(args, known_coins):
+def readConfig(args, known_coins, old_config):
     config_path: str = args.configfile
     num_changes: int = 0
     with open(config_path) as fs:
         config = json.load(fs)
+
+    proxy = ""
+    if args.proxy != "":
+        proxy = args.proxy
+    if "proxy" in config:
+        if proxy != "" and proxy != config["proxy"]:
+            print(f"Warning: Different proxy passed in arguments to that set in config, using: {proxy}.")
+        else:
+            proxy = config["proxy"]
+    if proxy != "":
+        config["proxy"] = proxy
+    if config.get("proxy") != old_config.get("proxy"):
+        print("Proxy set to: {}.".format(config.get("proxy")))
 
     if "offers" not in config:
         config["offers"] = []
@@ -300,6 +340,14 @@ def main():
         action="store_true",
     )
     parser.add_argument(
+        "--proxy",
+        dest="proxy",
+        help="proxy for calls to external urls (not BSX)",
+        type=str,
+        default="",
+        required=False,
+    )
+    parser.add_argument(
         "--configfile",
         dest="configfile",
         help=f"config file path (default={DEFAULT_CONFIG_FILE})",
@@ -332,10 +380,11 @@ def main():
         with open(args.statefile) as fs:
             script_state = json.load(fs)
 
+    config: dict = {}
     signal.signal(signal.SIGINT, signal_handler)
     while not delay_event.is_set():
         # Read config each iteration so they can be modified without restarting
-        config = readConfig(args, known_coins)
+        config = readConfig(args, known_coins, config)
         offer_templates = config["offers"]
         random.shuffle(offer_templates)
 
@@ -862,7 +911,7 @@ def main():
                     )
                     if args.debug:
                         print(f"Estimate URL: {estimate_url}")
-                    estimate_response = json.loads(post_req(estimate_url))
+                    estimate_response = json.loads(post_req(estimate_url, proxy_str=config.get("proxy", None)))
 
                     amount_to = float(estimate_response["estimated_amount"])
                     rate = swap_amount / amount_to
@@ -919,7 +968,7 @@ def main():
                         print(f"Exchange data: {exchange_data}")
 
                     exchange_response = json.loads(
-                        post_req(exchange_url, exchange_data)
+                        post_req(exchange_url, exchange_data, proxy_str=config.get("proxy", None))
                     )
 
                     if "Error" in exchange_response:
