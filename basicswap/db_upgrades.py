@@ -144,6 +144,16 @@ def upgradeDatabaseData(self, data_version):
 
 
 def upgradeDatabase(self, db_version):
+
+    try:
+        cursor = self.openDB()
+        cursor.execute("ALTER TABLE coinrates ADD COLUMN rate VARCHAR")
+        self.commitDB()
+    except Exception as e:
+        self.log.warning(f"DB fix error {e}")
+    finally:
+        self.closeDB(cursor, commit=False)
+
     if db_version >= CURRENT_DB_VERSION:
         return
 
