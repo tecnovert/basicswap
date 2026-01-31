@@ -1837,12 +1837,14 @@ class BTCInterface(Secp256k1Interface):
         funded_tx = CTransaction()
         funded_tx.nVersion = self.txVersion()
 
+        dummy_witness_stack = []
         for utxo in selected_utxos:
             txid_bytes = bytes.fromhex(utxo["txid"])[::-1]
             txid_int = int.from_bytes(txid_bytes, "little")
             funded_tx.vin.append(
                 CTxIn(COutPoint(txid_int, utxo["vout"]), nSequence=0xFFFFFFFD)
             )
+            dummy_witness_stack.append(self.getP2WPKHDummyWitness())
 
         for out in parsed_tx.vout:
             funded_tx.vout.append(out)
@@ -1850,6 +1852,15 @@ class BTCInterface(Secp256k1Interface):
         final_vsize = (
             10 + (len(funded_tx.vout) + 1) * 34 + len(selected_utxos) * input_vsize
         )
+        witness_bytes_len_est: int = self.getWitnessStackSerialisedLength(
+            dummy_witness_stack
+        )
+        final_vsize2 = self.getTxVSize(
+            funded_tx, add_witness_bytes=witness_bytes_len_est
+        )
+        self._log.warning(f"[rm] final_vsize {final_vsize}")
+        self._log.warning(f"[rm] final_vsize2 {final_vsize2}")
+
         final_fee = final_vsize * fee_per_vbyte
 
         min_relay_fee = 250
