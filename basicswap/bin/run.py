@@ -618,7 +618,7 @@ def runClient(
                 signal.CTRL_C_EVENT if os.name == "nt" else signal.SIGINT
             )
         except Exception as e:
-            swap_client.log.info(f"Interrupting {d.name} {d.handle.pid}, error {e}")
+            swap_client.log.error(f"Interrupting {d.name} {d.handle.pid}, {e}")
     for d in daemons:
         try:
             d.handle.wait(timeout=120)
@@ -628,6 +628,15 @@ def runClient(
             closed_pids.append(d.handle.pid)
         except Exception as e:
             swap_client.log.error(f"Error: {e}")
+            # TODO: Remove SIGKILL, required for 0.18.4.6
+            if "monero" in d.name:
+                try:
+                    swap_client.log.warning(
+                        f"Sending SIGKILL to {d.name} {d.handle.pid}"
+                    )
+                    os.kill(d.handle.pid, signal.SIGKILL)
+                except Exception as e:
+                    swap_client.log.error(f"Error: {e}")
 
     fail_code: int = swap_client.fail_code
     del swap_client
