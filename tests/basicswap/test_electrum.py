@@ -717,6 +717,8 @@ class Test(TestFunctions):
             "COIN": coin_name.capitalize(),
             "NET": "regtest",
             "LOG_LEVEL": "debug",
+            # Required since ElectrumX 2.0, was the 1.x default.
+            "DB_ENGINE": os.getenv("ELECTRUMX_DB_ENGINE", "leveldb"),
             "SERVICES": f"tcp://:{services_port},ssl://:{services_port + 1},rpc://",
             "CACHE_MB": "400",
             "DAEMON_URL": f"http://test_{ticker_lc}_0:test_{ticker_lc}_pwd_0@127.0.0.1:{node_rpc_port}",
@@ -727,6 +729,7 @@ class Test(TestFunctions):
             "DAEMON_POLL_INTERVAL_BLOCKS": "1000",
             "DAEMON_POLL_INTERVAL_MEMPOOL": "1000",
         }
+        logger.info(f"electrumx_env: {electrumx_env}")
         stdout_dest = open(f"{ELECTRUMX_DATADIR}/electrumx.log", "w")
         stderr_dest = stdout_dest
         cls.daemons.append(
