@@ -2,16 +2,16 @@
 
 ![BasicswapDEX Preview](.github-readme/basicswap_header.jpg)
 
-**[Official Website](https://basicswapdex.com)** | **[News](https://particl.news)** | **[Tutorials](https://academy.particl.io)** | **[Chat]( https://matrix.to/#/#basicswap:matrix.org )**
+**[Official Website](https://basicswapdex.com)** | **[News](https://particl.news)** | **[Tutorials](https://academy.particl.io)** | **[Chat](https://matrix.to/#/#basicswap:matrix.org)**
 
 Table of Contents
 
-* [About](#about)
-* [Features](#features)
-* [Available Assets](#available-assets)
-* [Participate](#participate)
-* [Tutorials](#tutorials)
-* [License](#license)
+- [About](#about)
+- [Features](#features)
+- [Available Assets](#available-assets)
+- [Participate](#participate)
+- [Tutorials](#tutorials)
+- [License](#license)
 
 ## About
 
@@ -25,13 +25,13 @@ Built as a low-friction, highly secure solution to the frequent losses of funds 
 
 ## Features
 
-* **True cross-chain support** — Swap cryptocurrencies that live on entirely different blockchain environments, like Bitcoin and Monero.
-* **Decentralized order book** — Make or take swap offers on a completely decentralized order book system.
-* **No third-party or middleman** — Trade crypto with no intermediaries, completely eliminating central points of failure.
-* **No trading fees** — Only pay the typical cryptocurrency network fee.
-* **Superior financial privacy** — Protect your financial information from unauthorized access with BasicSwap’s privacy-conscious technology.
-* **Full Monero support** — Swap Monero with a variety of other cryptocurrencies like Bitcoin or Particl. No wrapped assets or layer-2 involved.
-* **User-friendly interface** — Enjoy all these features within a user-friendly and intuitive interface that handles all the complicated parts for you.
+- **True cross-chain support** — Swap cryptocurrencies that live on entirely different blockchain environments, like Bitcoin and Monero.
+- **Decentralized order book** — Make or take swap offers on a completely decentralized order book system.
+- **No third-party or middleman** — Trade crypto with no intermediaries, completely eliminating central points of failure.
+- **No trading fees** — Only pay the typical cryptocurrency network fee.
+- **Superior financial privacy** — Protect your financial information from unauthorized access with BasicSwap’s privacy-conscious technology.
+- **Full Monero support** — Swap Monero with a variety of other cryptocurrencies like Bitcoin or Particl. No wrapped assets or layer-2 involved.
+- **User-friendly interface** — Enjoy all these features within a user-friendly and intuitive interface that handles all the complicated parts for you.
 
 ## Under the Hood
 
@@ -118,13 +118,19 @@ BasicSwap is compatible with the following digital assets.
    <td>DOGE
    </td>
   </tr>
-  <tr>
-   <td>Namecoin
-   </td>
-   <td>NMC
-   </td>
-  </tr>
-</table>
+   <tr>
+    <td>Namecoin
+    </td>
+    <td>NMC
+    </td>
+   </tr>
+   <tr>
+    <td>Dimecoin
+    </td>
+    <td>DIME
+    </td>
+   </tr>
+ </table>
 
 If you’d like to add a cryptocurrency to BasicSwap, refer to how other cryptocurrencies have been integrated to the DEX by following [this link](https://academy.particl.io/en/latest/basicswap-guides/basicswapguides_apply.html).
 
@@ -132,7 +138,7 @@ If you’d like to add a cryptocurrency to BasicSwap, refer to how other cryptoc
 
 ### Chats
 
-* **For support** Join the community on [#basicswap:matrix.org](https://matrix.to/#/#basicswap:matrix.org) using a Matrix client.
+- **For support** Join the community on [#basicswap:matrix.org](https://matrix.to/#/#basicswap:matrix.org) using a Matrix client.
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/BasicSwapDEX?label=follow%20us&style=social)](http://twitter.com/BasicSwapDEX)
 
@@ -140,11 +146,11 @@ If you’d like to add a cryptocurrency to BasicSwap, refer to how other cryptoc
 
 Follow the guides on [Particl Academy](https://academy.particl.io) for tutorials and guides on how BasicSwap works.
 
-* [Download BasicSwapDEX](https://github.com/basicswap/basicswap/tree/master/doc)
+- [Download BasicSwapDEX](https://github.com/basicswap/basicswap/tree/master/doc)
 
 #### Community chat support
 
-* [Matrix](https://matrix.to/#/#basicswap:matrix.org)
+- [Matrix](https://matrix.to/#/#basicswap:matrix.org)
 
 # Tutorials
 
